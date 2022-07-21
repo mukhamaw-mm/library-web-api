@@ -5,6 +5,8 @@ import com.library.librarywebapi.model.LibraryCreateModel;
 import com.library.librarywebapi.model.LibraryModel;
 import com.library.librarywebapi.service.ImageService;
 import com.library.librarywebapi.service.LibraryService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +60,16 @@ public class LibraryController {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") Long id) {
         this.libraryService.delete(id);
+    }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<ByteArrayResource> getImage(@PathVariable("id") UUID id) {
+        final byte[] data = imageService.get(id);
+        final ByteArrayResource resource = new ByteArrayResource(data);
+        return ResponseEntity.ok().contentLength(data.length)
+                .header("Content-type", "application/octet-stream")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + id.toString().concat(".jpg") + "\"")
+                .body(resource);
     }
 
 }
