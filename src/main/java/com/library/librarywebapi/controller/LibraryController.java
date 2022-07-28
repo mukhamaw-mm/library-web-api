@@ -1,11 +1,14 @@
 package com.library.librarywebapi.controller;
 
+import com.library.librarywebapi.entity.Author;
 import com.library.librarywebapi.entity.Library;
 import com.library.librarywebapi.model.LibraryCreateModel;
 import com.library.librarywebapi.model.LibraryModel;
 import com.library.librarywebapi.service.ImageService;
 import com.library.librarywebapi.service.LibraryService;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,13 +44,23 @@ public class LibraryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Library>> getAll(){
-        return ResponseEntity.ok(libraryService.getAll());
+    public ResponseEntity<Page<Library>> getAll(int page, int size){
+        return ResponseEntity.ok(libraryService.getAll(PageRequest.of(page, size)));
     }
 
     @GetMapping("/location")
     public ResponseEntity<Library> getByLocation(@RequestParam String location) {
         return ResponseEntity.ok(libraryService.getByLocation(location));
+    }
+
+    @GetMapping("/address")
+    public ResponseEntity<List<Library>> searchByAddress(@RequestParam ("address") String address) {
+        return ResponseEntity.ok(libraryService.searchByLocation(address + "%"));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Library>> search(@RequestParam("name") String name) {
+        return ResponseEntity.ok(libraryService.searchByName(name + "%"));
     }
 
     @PutMapping

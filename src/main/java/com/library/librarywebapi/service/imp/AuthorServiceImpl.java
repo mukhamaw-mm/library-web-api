@@ -1,15 +1,20 @@
 package com.library.librarywebapi.service.imp;
 
 import com.library.librarywebapi.entity.Author;
+import com.library.librarywebapi.entity.Book;
+import com.library.librarywebapi.entity.Library;
 import com.library.librarywebapi.model.AuthorCreateModel;
 import com.library.librarywebapi.model.AuthorModel;
 import com.library.librarywebapi.model.mapper.AuthorMapper;
 import com.library.librarywebapi.repository.AuthorRepository;
 import com.library.librarywebapi.service.AuthorService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -30,10 +35,14 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Author> getAll() {
-        return authorRepository.findAll();
+    public Page<Author> getAll(Pageable  pageable) {
+        return authorRepository.findAll(pageable);
     }
 
+    @Override
+    public List<Author> searchByName(String name) {
+        return authorRepository.findByNameLike(name);
+    }
     @Override
     public void update(AuthorModel authorModel) {
     Author author = authorRepository.findById(authorModel.getId()).orElseThrow(EntityNotFoundException::new);

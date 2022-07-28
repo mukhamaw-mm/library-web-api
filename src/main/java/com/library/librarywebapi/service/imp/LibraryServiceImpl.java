@@ -7,6 +7,8 @@ import com.library.librarywebapi.model.LibraryModel;
 import com.library.librarywebapi.model.mapper.LibraryMapper;
 import com.library.librarywebapi.repository.LibraryRepository;
 import com.library.librarywebapi.service.LibraryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -32,13 +34,23 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public List<Library> getAll() {
-        return libraryRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+    public Page<Library> getAll(Pageable pageable) {
+        return libraryRepository.findAll(pageable);
     }
 
     @Override
     public Library getByLocation(String location) {
         return libraryRepository.getByLocation(location).orElseThrow(() -> new EntityNotFoundException(location));
+    }
+
+    @Override
+    public List<Library> searchByLocation(String address) {
+        return libraryRepository.findByAddressLike(address);
+    }
+
+    @Override
+    public List<Library> searchByName(String name) {
+        return libraryRepository.findByNameLike(name);
     }
 
 
